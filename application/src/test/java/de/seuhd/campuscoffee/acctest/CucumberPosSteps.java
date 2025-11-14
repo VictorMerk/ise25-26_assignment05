@@ -92,6 +92,11 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add Given step for new scenario
+    @Given("three existing POS with the following elements")
+    public void threeExistingPosWithTheFollowingElements(List<PosDto> posList) {
+        createdPosList = createPos(posList);
+        assertThat(createdPosList).size().isEqualTo(posList.size());
+    }
 
     // When -----------------------------------------------------------------------
 
@@ -102,6 +107,22 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add When step for new scenario
+    @When("I update the description of POS named {string} to {string}")
+    public void iUpdateTheDescriptionOfPosNamedTo(String posName, String newDescription) {
+        PosDto posToUpdate = retrievePosByName(posName);
+        PosDto updatedPosDto = PosDto.builder()
+                .id(posToUpdate.id())
+                .name(posToUpdate.name())
+                .description(newDescription)
+                .type(posToUpdate.type())
+                .campus(posToUpdate.campus())
+                .street(posToUpdate.street())
+                .houseNumber(posToUpdate.houseNumber())
+                .postalCode(posToUpdate.postalCode())
+                .city(posToUpdate.city())
+                .build();
+        updatedPos = updatePos(List.of(updatedPosDto)).get(0);
+    }
 
     // Then -----------------------------------------------------------------------
 
@@ -114,4 +135,9 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add Then step for new scenario
+    @Then("the POS named {string} should have description {string}")
+    public void thePosNamedShouldHaveDescription(String posName, String expectedDescription) {
+        PosDto retrievedPos = retrievePosByName(posName);
+        assertThat(retrievedPos.description()).isEqualTo(expectedDescription);
+    }
 }
